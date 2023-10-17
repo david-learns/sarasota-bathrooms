@@ -1,15 +1,16 @@
 :root {
     --clr-p-1: #000a0f;
     --clr-p-2: #001f2e;
-    --clr-p-3: #006594;
-    --clr-p-4: #00aeff;
-    --clr-p-5: #a0e1ff;
-    --clr-p-6: #f0faff;
+    --clr-p-3: #002e45;
+    --clr-p-4: #006594;
+    --clr-p-5: #00aeff;
+    --clr-p-6: #a0e1ff;
+    --clr-p-7: #f0faff;
 }
 
 body {
     background-color: var(--clr-p-1);
-    color: var(--clr-p-6);
+    color: var(--clr-p-7);
     margin: 0 10px;
     font-family: Geneva, Tahoma, sans-serif;
     font-size: 1em;
@@ -44,7 +45,7 @@ nav {
 
 a {
     text-decoration: none;
-    color: var(--clr-p-5);
+    color: var(--clr-p-6);
 }
 
 li,
@@ -56,13 +57,13 @@ article {
 hr {
     border: none;
     height: 1px;
-    background-color: var(--clr-p-3);
+    background-color: var(--clr-p-4);
 }
 
 button {
     font: inherit;
     font-size: inherit;
-    color: var(--clr-p-5);
+    color: var(--clr-p-6);
 }
 
 .toilet {
@@ -76,7 +77,6 @@ button {
 .group {
     padding: 0.5em;
     border: 2px solid var(--clr-p-3);
-    border-radius: 5px;
     background-color: var(--clr-p-2);
 }
 
@@ -88,7 +88,7 @@ button {
     font-family: sans-serif;
     font-style: italic;
     font-size: inherit;
-    color: var(--clr-p-4);
+    color: var(--clr-p-5);
     white-space: nowrap;
 }
 
