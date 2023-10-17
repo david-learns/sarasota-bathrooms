@@ -65,6 +65,10 @@ button {
     color: var(--clr-p-5);
 }
 
+.toilet {
+   vertical-align: middle;
+}
+
 .controls {
     display: flex;
 }
@@ -95,6 +99,9 @@ button {
     margin: 0;
     min-width: fit-content;
     min-height: fit-content;
-    font-size: large;
-    
+    font-size: large;   
+}
+
+.thanks {
+    font-size: .75em;
 }
