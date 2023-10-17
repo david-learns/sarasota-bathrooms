@@ -10,10 +10,10 @@
 body {
     background-color: var(--clr-p-1);
     color: var(--clr-p-6);
-    margin: 0 40px;
+    margin: 0 10px;
     font-family: Geneva, Tahoma, sans-serif;
     font-size: 1em;
-    max-width: 50%;
+    max-width: 50em;
 }
 
 header {
