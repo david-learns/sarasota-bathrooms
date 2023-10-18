@@ -3,6 +3,7 @@ const files = [
     '/',
     '/index.html',
     '/about.html',
+    '/app.js',
     '/styles.css',
     '/manifest.json',
     '/browserconfig.xml',
