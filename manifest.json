@@ -1,5 +1,8 @@
 {
  "name": "Toilet Parks",
+ "lang": "en-US",
+ "start_url": "\/index.html",
+ "display": "standalone",
  "icons": [
   {
    "src": "\/images\/android-icon-36x36.png",
