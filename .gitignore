@@ -3,3 +3,5 @@ scraper-parks.js
 readme.txt
 parks.json
 node_modules
+package.json
+package-lock.json
