@@ -31,19 +31,37 @@
     
     <header>
         <h1>Sarasota County <img class="toilet" src="images/icons8-toilet-64.png" alt="toilet"> Parks</h1>
-        <nav class="group">
+        <nav class="common">
             <a>Home</a>
             <a href="about.html">About</a>
         </nav>
     </header>
 
     <div class="controls">
-        <button class="sortGpsBtn group">Sort GPS</button>
-        <button class="sortTypeBtn group">Sort Type</button>
-        <button class="sortCityBtn group">Sort City</button>
+        <button class="filter-btn common spc under-construction">Filter</button>
+        <button class="sort-btn common spc">Sort</button>
+        <button class="clear-btn common under-construction">Clear</button>
     </div>
+    <dialog class="filter-modal">
+        <div class="modal-controls">
+            <button class="filter-cancel-btn common spc">Cancel</button>
+            <button class="filter-ok-btn common">OK</button>
+        </div>
+        <button class="filter-distance common">Filter By Distance</button>
+        <button class="filter-city common">Filter By City</button>
+        <button class="filter-type common">Filter By Type</button>
+    </dialog>
+    <dialog class="sort-modal">
+        <div class="modal-controls">
+            <button class="sort-cancel-btn common spc">Cancel</button>
+            <button class="sort-ok-btn common">OK</button>
+        </div>
+        <button class="sort-distance common">Sort By Distance <span class="sort-order">></span></button>
+        <button class="sort-city common">Sort By City <span class="sort-order">></span></button>
+        <button class="sort-type common">Sort By Type <span class="sort-order">></span></button>
+    </dialog>
 
-    <section>
+    <section class="parks-list">
         <ul>
         </ul>
     </section>

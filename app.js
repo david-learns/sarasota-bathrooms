@@ -19,7 +19,7 @@ const degrees = (lat1, lat2, lon1, lon2) => {
 const populateListItems = (parks) => {
     const htmlParks = parks.map(park => {
     const html = `
-        <li class="group">
+        <li class="common">
             <h3 class="name">${park.name}</h3><span class="apprx-dist">${park.dist ? ' ~'.concat(Math.round(park.dist * 10) / 10, ' mi ', `<div class="arrow" style="transform: rotate(${-Math.trunc(park.deg)}deg);">&#8594</div>`) : ''}</span>
             <hr>
             <h4>${park.type}</h4>
@@ -33,49 +33,156 @@ const populateListItems = (parks) => {
     ul.innerHTML = htmlParks;
 }
 
-const sortGPS = () => {
-    if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition((position) => {
-            parks.forEach(park => {
-                park.dist = distance(position.coords.latitude, park.lat, position.coords.longitude, park.lon);
-                park.deg = degrees(position.coords.latitude, park.lat, position.coords.longitude, park.lon);
-            });
-            parks.sort((a, b) => a.dist - b.dist);
-            populateListItems(parks);
-        });
-    } else {
-        alert('this web app needs access to gps to function properly');
-    }
-}
-
-const sortType = () => {
-    parks.sort((a, b) => {
-        const aType = a.type.toLowerCase();
-        const bType = b.type.toLowerCase();
-        if (aType < bType) return -1;
-        if (aType > bType) return 1;
-        return 0;
-    });
-    populateListItems(parks);
-}
-
-const sortCity = () => {
-    parks.sort((a, b) => {
-        const aCity = a.addr.toLowerCase().slice(a.addr.indexOf(',') + 1);
-        const bCity = b.addr.toLowerCase().slice(b.addr.indexOf(',') + 1);
-        if (aCity < bCity) return -1;
-        if (aCity > bCity) return 1;
-        return 0;
-    });                
-    populateListItems(parks);
-}
-
-const sortGpsBtn = document.querySelector('.sortGpsBtn');
-const sortTypeBtn = document.querySelector('.sortTypeBtn');
-const sortCityBtn = document.querySelector('.sortCityBtn');
-
 document.addEventListener('DOMContentLoaded', populateListItems.bind(null, parks));
 
-sortGpsBtn.addEventListener('click', sortGPS);
-sortTypeBtn.addEventListener('click', sortType);
-sortCityBtn.addEventListener('click', sortCity);
+const filterBtn = document.querySelector('.filter-btn');
+const sortBtn = document.querySelector('.sort-btn');
+const clearBtn = document.querySelector('.clear-btn');
+const filterModal = document.querySelector('.filter-modal');
+const sortModal = document.querySelector('.sort-modal');
+const parksList = document.querySelector('.parks-list');
+
+// filterBtn.addEventListener('click', () => {
+//     filterModal.style.top = parksList.getBoundingClientRect().y + 'px';
+//     filterModal.showModal();
+// });
+
+const sortModalHandler = () => {
+
+        const sortByBtns = document.querySelectorAll('.sort-modal > button');
+
+        const order = [];
+        order.length = sortByBtns.length;
+        order.fill(0);
+
+        sortModal.style.top = parksList.getBoundingClientRect().y + 'px';
+        sortModal.showModal();
+
+        const styles = getComputedStyle(document.documentElement);
+        const norml = styles.getPropertyValue('--clr-p-2');
+        const light = styles.getPropertyValue('--clr-p-3');
+
+        const sortBtnHandler = (event = {target: null}) => {
+            sortByBtns.forEach((btn, i) => {
+                const sortOrderSpan = btn.querySelector('.sort-order');
+                if (btn === event.target) {
+                    if (order[i]) {
+                        if (sortOrderSpan.textContent === '>') {
+                            order[i] += 1;
+                            sortOrderSpan.textContent = '<';
+                        } else {
+                            order[i] -= 1;
+                            sortOrderSpan.textContent = '>';
+                        }
+                    } else {
+                        order[i] = 1;
+                    }
+                    btn.style.backgroundColor = light;
+                } else {
+                    sortOrderSpan.textContent = '>';
+                    order[i] = 0;
+                    btn.style.backgroundColor = norml;
+                }
+            });
+        };
+
+        const sortGPS = o => {
+            const cmpFn = o === 1 ? (a, b) => a.dist - b.dist : (a, b) => b.dist - a.dist;
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    parks.forEach(park => {
+                        park.dist = distance(position.coords.latitude, park.lat, position.coords.longitude, park.lon);
+                        park.deg = degrees(position.coords.latitude, park.lat, position.coords.longitude, park.lon);
+                    });
+                    parks.sort(cmpFn);
+                    populateListItems(parks);
+                });
+            } else {
+                alert('this web app needs access to gps to function properly');
+            }
+        };
+        
+        const sortType = o => {
+            const val = o === 1 ? 1 : -1;
+            parks.sort((a, b) => {
+                const aType = a.type;
+                const bType = b.type;
+                if (aType < bType) return -val;
+                if (aType > bType) return val;
+                return 0;
+            });
+            populateListItems(parks);
+        };
+        
+        const sortCity = o => {
+            const val = o === 1 ? 1 : -1;
+            parks.sort((a, b) => {
+                const aCity = a.addr.slice(a.addr.indexOf(',') + 1);
+                const bCity = b.addr.slice(b.addr.indexOf(',') + 1);
+                if (aCity < bCity) return -val;
+                if (aCity > bCity) return val;
+                return 0;
+            });                
+            populateListItems(parks);
+        };
+
+        const sortOkBtn = document.querySelector('.sort-ok-btn');
+        const sortCancelBtn = document.querySelector('.sort-cancel-btn');
+        const sortDistanceBtn = document.querySelector('.sort-distance');
+        const sortCityBtn = document.querySelector('.sort-city');
+        const sortTypeBtn = document.querySelector('.sort-type');
+
+        const closeModal = () => {
+            sortBtnHandler();
+            sortTypeBtn.removeEventListener('click', sortBtnHandler);
+            sortCityBtn.removeEventListener('click', sortBtnHandler);
+            sortDistanceBtn.removeEventListener('click', sortBtnHandler);
+            sortCancelBtn.removeEventListener('click', closeModal);
+            sortOkBtn.removeEventListener('click', sortOkBtnHandler);
+            sortModal.close();
+        };
+
+        const sortOkBtnHandler = () => {
+            if (order.some(e => e !== 0)) {
+                const i = order.findIndex(e => e > 0);
+                const sortBy = sortByBtns[i].classList[0];
+                if (sortBy === 'sort-type') {
+                    sortType(order[i]);
+                } else if (sortBy === 'sort-city') {
+                    sortCity(order[i]);
+                } else if (sortBy === 'sort-distance') {
+                    sortGPS(order[i]);
+                }
+            }
+            closeModal();
+        }
+    
+        sortOkBtn.addEventListener('click', sortOkBtnHandler);
+        sortCancelBtn.addEventListener('click', closeModal);
+        sortDistanceBtn.addEventListener('click', sortBtnHandler);
+        sortCityBtn.addEventListener('click', sortBtnHandler);
+        sortTypeBtn.addEventListener('click', sortBtnHandler);
+
+};
+
+sortBtn.addEventListener('click', sortModalHandler);
+
+// clearBtn.addEventListener('click', () => {
+
+// });
+
+// const filterOkBtn = document.querySelector('.filter-ok-btn');
+// const filterCancelBtn = document.querySelector('.filter-cancel-btn');
+
+// filterOkBtn.addEventListener('click', () => {
+//     filterModal.close();
+// });
+
+// filterCancelBtn.addEventListener('click', () => {
+//     filterModal.close();
+// });
+
+
+
+
+
