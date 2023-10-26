@@ -22,7 +22,9 @@ body {
 
 header,
 .sort-modal button,
-.filter-modal button {
+.filter-modal button,
+.filter-type-modal button,
+.filter-city-modal button {
     margin-bottom: var(--spc-p-2);
 }
 
@@ -88,18 +90,11 @@ button {
 .spc {
     margin-right: var(--spc-p-2);
 }
-/* 
-https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog
-https://developer.mozilla.org/en-US/docs/Web/CSS/::backdrop
-https://developer.mozilla.org/en-US/docs/Web/CSS/:modal
-https://css-tricks.com/how-to-implement-and-style-the-dialog-element/
-https://stackoverflow.com/questions/9467026/changing-position-of-the-dialog-on-screen-android
-https://stackoverflow.com/questions/73925255/how-can-the-html-dialog-element-be-positioned-according-to-normal-flow-when-op
-
-*/
 
 .sort-modal:modal,
-.filter-modal:modal {
+.filter-modal:modal,
+.filter-type-modal:modal,
+.filter-city-modal:modal {
     background-color: var(--clr-p-1);
     position: fixed;
     box-sizing: border-box;
@@ -113,6 +108,17 @@ https://stackoverflow.com/questions/73925255/how-can-the-html-dialog-element-be-
 .sort-modal::backdrop,
 .filter-modal::backdrop {
     background-color: rgba(0, 10, 15, 0.75);
+}
+
+.filter-num {
+    text-align: center;
+}
+
+.filter-num > span {
+    display: inline-block;
+    font-size: 10px;
+    font-style: italic;
+    color: var(--clr-p-6);
 }
 
 .common {
