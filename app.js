@@ -156,7 +156,8 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
 
                     filterTypeBtnHandler() {
                         
-                        filterTypeModal.style.top = document.querySelector('nav').getBoundingClientRect().y + 'px';
+                        // filterTypeModal.style.top = document.querySelector('nav').getBoundingClientRect().y + 'px';
+                        filterTypeModal.style.top = '0px';
                         filterTypeModal.showModal();
 
                         const filterNum = document.querySelector('.filter-type-modal > .filter-num > span');
@@ -223,7 +224,8 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
 
                     filterCityBtnHandler() {
                         
-                        filterCityModal.style.top = document.querySelector('nav').getBoundingClientRect().y + 'px';
+                        // filterCityModal.style.top = document.querySelector('nav').getBoundingClientRect().y + 'px';
+                        filterCityModal.style.top = '0px';
                         filterCityModal.showModal();
 
                         const filterNum = document.querySelector('.filter-city-modal > .filter-num > span');
@@ -294,7 +296,8 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
 
             const filterModal = document.querySelector('.filter-modal');
 
-            filterModal.style.top = parksList.getBoundingClientRect().y + 'px';
+            // filterModal.style.top = parksList.getBoundingClientRect().y + 'px';
+            filterModal.style.top = '0px';
             filterModal.showModal();
 
             const filterCancelBtn = document.querySelector('.filter-cancel-btn');
@@ -335,7 +338,8 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
             order.length = sortByBtns.length;
             order.fill(0);
 
-            sortModal.style.top = parksList.getBoundingClientRect().y + 'px';
+            // sortModal.style.top = parksList.getBoundingClientRect().y + 'px';
+            sortModal.style.top = '0px';
             sortModal.showModal();
 
             const sortBtnHandler = (event = {target: null}) => {
