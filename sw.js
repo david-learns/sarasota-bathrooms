@@ -1,4 +1,4 @@
-const cacheName = 'toilet-parks-v1.1';
+const cacheName = 'toilet-parks-v1.1.1';
 const files = [
     '/',
     '/index.html',
@@ -47,7 +47,7 @@ self.addEventListener('install', e => {
 self.addEventListener('fetch', e => {
     e.respondWith(
         (async () => {
-            const res = await fetch(e.request, {cache: 'no-store' });
+            const res = await fetch(e.request);
             if (res.ok) {
                 const cache = await caches.open(cacheName);
                 cache.put(e.request, res.clone());
