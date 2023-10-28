@@ -26,7 +26,7 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
     const populateListItems = (parks) => {
         const ul = document.querySelector('ul');
         if (!parks.length) {
-            ul.innerHTML = '<li class="common"><p>No results. Clear and apply different filters.</p></li>';
+            ul.innerHTML = '<li class="common"><p>No results. Reset and apply different filters.</p></li>';
         } else {
             const htmlParks = parks.map(park => {
             const html = `
@@ -379,8 +379,8 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
 
 const filterBtn = document.querySelector('.filter-btn');
 const sortBtn = document.querySelector('.sort-btn');
-const clearBtn = document.querySelector('.clear-btn');
+const resetBtn = document.querySelector('.reset-btn');
 
 filterBtn.addEventListener('click', filterBtnHandler);
 sortBtn.addEventListener('click', sortBtnHandler);
-clearBtn.addEventListener('click', clearBtnHandler);
+resetBtn.addEventListener('click', clearBtnHandler);
