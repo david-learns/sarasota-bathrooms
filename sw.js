@@ -1,7 +1,6 @@
 const cacheName = 'toilet-parks-v1';
 const files = [
     '/',
-    '/sw.js',
     '/index.html',
     '/about.html',
     '/app.js',
