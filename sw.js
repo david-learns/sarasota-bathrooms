@@ -1,6 +1,7 @@
-const cacheName = 'toilet-parks-v1.1.1';
+const cacheName = 'toilet-parks-v1.1.2';
 const files = [
     '/',
+    '/sw.js',
     '/index.html',
     '/about.html',
     '/app.js',
