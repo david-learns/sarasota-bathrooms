@@ -1,4 +1,4 @@
-const cacheName = 'toilet-parks-v1.1.2';
+const cacheName = 'toilet-parks-v1';
 const files = [
     '/',
     '/sw.js',
@@ -48,13 +48,12 @@ self.addEventListener('install', e => {
 self.addEventListener('fetch', e => {
     e.respondWith(
         (async () => {
+            const cacheRes = await caches.match(e.request);
+            if (cacheRes) return cacheRes;
             const res = await fetch(e.request);
-            if (res.ok) {
-                const cache = await caches.open(cacheName);
-                cache.put(e.request, res.clone());
-                return res;
-            }
-            return await caches.match(e.request);;
+            const cache = await caches.open(cacheName);
+            cache.put(e.request, res.clone());
+            return res;
         })(),
     );
 });
