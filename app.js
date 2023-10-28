@@ -12,12 +12,6 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
 
     let parks = [...oParks];
 
-    const filterByCategories = {
-        distance: null,
-        city: null,
-        type: null,
-    };
-
     const distance = (lat1, lat2, lon1, lon2) => {
         return Math.sqrt(Math.pow(lat2 - lat1, 2) + Math.pow(lon2 - lon1, 2)) * 69;
     };
@@ -49,11 +43,7 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
             ul.innerHTML = htmlParks;
         }
     };
-
-    document.addEventListener('DOMContentLoaded', populateListItems.bind(null, oParks));
-
-    const parksList = document.querySelector('.parks-list');
-
+    
     const setParkDD = cb => {
         navigator.geolocation.getCurrentPosition(position => {
             oParks.forEach(oPark => {
@@ -63,116 +53,69 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
             cb();
         });
     };
-
+    
+    document.addEventListener('DOMContentLoaded', populateListItems.bind(null, oParks));
     const styles = getComputedStyle(document.documentElement);
     const normal = styles.getPropertyValue('--clr-p-2');
     const highlight = styles.getPropertyValue('--clr-p-3');
-
-    const filterBtnCats = (() => {
-        const cityObj = {};
-        const typeObj = {};
-        parks.forEach(park => {
-            const city = park.addr.slice(park.addr.indexOf(',') + 2, park.addr.lastIndexOf(','));
-            const type = park.type.slice(6);
-            if (!cityObj[city]) cityObj[city] = true;
-            if (!typeObj[type]) typeObj[type] = true;
-        });
-
-        return {
-            cities: Object.keys(cityObj),
-            types: Object.keys(typeObj),
-        };
-    })();
-
-    const renderFilterBtns = (element, filter) => {
-        const htmlFilterBtns = filterBtnCats[filter].map(e => {
-            const html = `
-                <button class="filter-type-${e.toLowerCase().replace(' ', '-')} common">${e}</button>
-            `;
-            return html;
-        });
-        htmlFilterBtns.sort();
-        element.innerHTML += htmlFilterBtns.join('');
-    };
-
-    const filterTypeModal = document.querySelector('.filter-type-modal');
-    const filterCityModal = document.querySelector('.filter-city-modal');
-
-    (() => {
-        renderFilterBtns(filterTypeModal, 'types');
-        renderFilterBtns(filterCityModal, 'cities');
-    })();
-    
-    const filterByTypeBtns = document.querySelectorAll('.filter-type-modal > button');
-    const filterByCityBtns = document.querySelectorAll('.filter-city-modal > button');
-
-    const arrayFilterByCategoriesCb = (filterByCategories, park) => {
-                    
-        let cityMatch = false;
-        let typeMatch = false;
-
-        for (const key in filterByCategories) {
-
-            if (filterByCategories[key]) {
-
-                if (key === 'distance') {
-                    
-                } else if (key === 'city') {
-
-                    if (filterByCategories[key].includes(park.addr.slice(park.addr.indexOf(',') + 2, park.addr.lastIndexOf(',')))) {
-                        cityMatch = true;
-                    }
-
-                } else if (key === 'type') {
-
-                    if (filterByCategories[key].includes(park.type.slice(6))) {
-                        typeMatch = true;
-                    }
-
-                }
-            }
-        }
-
-        if (filterByCategories.city === null && filterByCategories.type === null && filterByCategories.distance === null) return true;
-        
-        if (filterByCategories.type === null) return cityMatch;
-
-        if (filterByCategories.city === null) return typeMatch;
-        
-        return cityMatch && typeMatch;
-        
-    };
 
     return {
 
         filterBtnHandler() {
 
+            let filteredParks = parks;
+
             const { filterDistanceBtnHandler, filterCityBtnHandler, filterTypeBtnHandler } = (() => {
-                
+
+                const filterBtnCats = () => {
+                    const cityObj = {};
+                    const typeObj = {};
+                    filteredParks.forEach(park => {
+                        const city = park.addr.slice(park.addr.indexOf(',') + 2, park.addr.lastIndexOf(','));
+                        const type = park.type.slice(6);
+                        if (!cityObj[city]) cityObj[city] = true;
+                        if (!typeObj[type]) typeObj[type] = true;
+                    });
+
+                    return {
+                        cities: Object.keys(cityObj),
+                        types: Object.keys(typeObj),
+                    };
+                };
+
+                const renderFilterBtns = (element, filter) => {
+                    const htmlFilterBtns = filterBtnCats()[filter].map(e => {
+                        const html = `
+                            <button class="filter-category-btn common">${e}</button>
+                        `;
+                        return html;
+                    });
+                    htmlFilterBtns.sort();
+                    element.insertAdjacentHTML('afterend', htmlFilterBtns.join(''));
+                };
+
+                const filterTypeModal = document.querySelector('.filter-type-modal');
+                const filterCityModal = document.querySelector('.filter-city-modal');
+
                 let filterByCity = {};
                 let filterByType = {};
                               
                 return {
 
                     filterTypeBtnHandler() {
-                        
-                        filterTypeModal.showModal();
 
-                        const filterNum = document.querySelector('.filter-type-modal > .filter-num > span');
-
-                        const cityKeys = Object.keys(filterByCity);
-                        const typeKeys = Object.keys(filterByType);
-                        filterNum.textContent = `${parks.filter(arrayFilterByCategoriesCb.bind(null, {
-                            city: cityKeys.length ? cityKeys : null,
-                            type: typeKeys.length ? typeKeys : null,
-                        })).length} results`;
+                        renderFilterBtns(document.querySelector('.filter-type-modal .modal-controls'), 'types');
 
                         const filterTypeCancelBtn = document.querySelector('.filter-type-modal .filter-cancel-btn');
                         const filterTypeOkBtn = document.querySelector('.filter-type-modal .filter-ok-btn');
                         const filterByTypeBtns = document.querySelectorAll('.filter-type-modal > button');
                         
-                        const filterByTypeBtnHandler = event => {
+                        filterTypeModal.showModal();
 
+                        const filterNum = document.querySelector('.filter-type-modal > .filter-num > span');
+                        filterNum.textContent = '0 results';
+                        
+                        const filterByTypeBtnHandler = event => {
                             if (filterByType[event.target.textContent]) {
                                 delete filterByType[event.target.textContent];
                                 event.target.style.backgroundColor = normal;
@@ -181,34 +124,32 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
                                 event.target.style.backgroundColor = highlight;
                             }
 
-                            const cityKeys = Object.keys(filterByCity);
-                            const typeKeys = Object.keys(filterByType);
-                            filterNum.textContent = `${parks.filter(arrayFilterByCategoriesCb.bind(null, {
-                                city: cityKeys.length ? cityKeys : null,
-                                type: typeKeys.length ? typeKeys : null,
-                            })).length} results`;
+                            const types = Object.keys(filterByType);
+                            const numResults = filteredParks.filter(park => {
+                                return types.includes(park.type.slice(6));
+                            }).length;
+                            filterNum.textContent = `${numResults} results`;
                         };
 
                         const closeModal = () => {
+                            filterByType = {};
+                            for (const btn of filterByTypeBtns) {
+                                btn.remove();
+                            }
                             filterTypeCancelBtn.removeEventListener('click', cancelModal);
                             filterTypeOkBtn.removeEventListener('click', closeModal);
-                            filterByTypeBtns.forEach(btn => {
-                                btn.removeEventListener('click', filterByTypeBtnHandler);
-                            });
-                            filterByTypeBtns.forEach(btn => {
-                                btn.style.backgroundColor = normal;
-                            });
                             filterTypeModal.close();
                         };
 
                         const cancelModal = () => {
-                            filterByCategories.type = null;
-                            filterByType = {};
                             closeModal();
                         };
 
                         const okModal = () => {
-                            filterByCategories.type = Object.keys(filterByType);
+                            const types = Object.keys(filterByType);
+                            filteredParks = filteredParks.filter(park => {
+                                return types.includes(park.type.slice(6));
+                            });
                             closeModal();
                         };
 
@@ -222,20 +163,16 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
 
                     filterCityBtnHandler() {
                         
-                        filterCityModal.showModal();
-
-                        const filterNum = document.querySelector('.filter-city-modal > .filter-num > span');
-
-                        const cityKeys = Object.keys(filterByCity);
-                        const typeKeys = Object.keys(filterByType);
-                        filterNum.textContent = `${parks.filter(arrayFilterByCategoriesCb.bind(null, {
-                            city: cityKeys.length ? cityKeys : null,
-                            type: typeKeys.length ? typeKeys : null,
-                        })).length} results`;
+                        renderFilterBtns(document.querySelector('.filter-city-modal .modal-controls'), 'cities');
 
                         const filterCityCancelBtn = document.querySelector('.filter-city-modal .filter-cancel-btn');
                         const filterCityOkBtn = document.querySelector('.filter-city-modal .filter-ok-btn');
                         const filterByCityBtns = document.querySelectorAll('.filter-city-modal > button');
+                        
+                        filterCityModal.showModal();
+
+                        const filterNum = document.querySelector('.filter-city-modal > .filter-num > span');
+                        filterNum.textContent = '0 results';
 
                         const cityNameBtnHandler = event => {
 
@@ -247,34 +184,32 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
                                 event.target.style.backgroundColor = highlight;
                             }
                             
-                            const cityKeys = Object.keys(filterByCity);
-                            const typeKeys = Object.keys(filterByType);
-                            filterNum.textContent = `${parks.filter(arrayFilterByCategoriesCb.bind(null, {
-                                city: cityKeys.length ? cityKeys : null,
-                                type: typeKeys.length ? typeKeys : null,
-                            })).length} results`;
+                            const cities = Object.keys(filterByCity);
+                            const numResults = filteredParks.filter(park => {
+                                return cities.includes(park.addr.slice(park.addr.indexOf(',') + 2, park.addr.lastIndexOf(',')));
+                            }).length;
+                            filterNum.textContent = `${numResults} results`;
                         };
 
                         const closeModal = () => {
+                            filterByCity = {};
+                            for (const btn of filterByCityBtns) {
+                                btn.remove();
+                            }
                             filterCityCancelBtn.removeEventListener('click', cancelModal);
                             filterCityOkBtn.removeEventListener('click', closeModal);
-                            filterByCityBtns.forEach(btn => {
-                                btn.removeEventListener('click', cityNameBtnHandler);
-                            });
-                            filterByCityBtns.forEach(btn => {
-                                btn.style.backgroundColor = normal;
-                            });
                             filterCityModal.close();
                         };
 
                         const cancelModal = () => {
-                            filterByCategories.city = null;
-                            filterByCity = {};
                             closeModal();
                         };
 
                         const okModal = () => {
-                            filterByCategories.city = Object.keys(filterByCity);
+                            const cities = Object.keys(filterByCity);
+                            filteredParks = filteredParks.filter(park => {
+                                return cities.includes(park.addr.slice(park.addr.indexOf(',') + 2, park.addr.lastIndexOf(',')));
+                            });
                             closeModal();
                         };
 
@@ -309,7 +244,7 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
             };
             
             const okModal = () => {
-                parks = parks.filter(arrayFilterByCategoriesCb.bind(null, filterByCategories));
+                parks = filteredParks;
                 populateListItems(parks);
                 closeModal();
             }
@@ -435,16 +370,6 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
 
         clearBtnHandler() {
             parks = [...oParks];
-            filterByCategories.distance = null;
-            filterByCategories.type = null;
-            filterByCategories.city = null;
-            // filterByDistanceBtns remove highlighting
-            filterByCityBtns.forEach(btn => {
-                btn.style.backgroundColor = normal;
-            });
-            filterByTypeBtns.forEach(btn => {
-                btn.style.backgroundColor = normal;
-            });
             populateListItems(parks);
         },
 
