@@ -1,4 +1,4 @@
-const cacheName = 'toilet-parks-v1';
+const cacheName = 'toilet-parks-v1.1';
 const files = [
     '/',
     '/index.html',
@@ -47,12 +47,13 @@ self.addEventListener('install', e => {
 self.addEventListener('fetch', e => {
     e.respondWith(
         (async () => {
-            const cacheRes = await caches.match(e.request);
-            if (cacheRes) return cacheRes;
-            const res = await fetch(e.request);
-            const cache = await caches.open(cacheName);
-            cache.put(e.request, res.clone());
-            return res;
+            const res = await fetch(e.request, {cache: 'no-store' });
+            if (res.ok) {
+                const cache = await caches.open(cacheName);
+                cache.put(e.request, res.clone());
+                return res;
+            }
+            return await caches.match(e.request);;
         })(),
     );
 });
