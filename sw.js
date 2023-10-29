@@ -1,4 +1,4 @@
-const cacheName = 'toilet-parks-v1';
+const cacheName = 'toilet-parks-v2';
 const files = [
     '/',
     '/index.html',
