@@ -64,48 +64,48 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
         filterBtnHandler() {
 
             let filteredParks = parks;
+            
+            let filterByCity = {};
+            let filterByType = {};
+
+            const filterBtnCats = () => {
+                const cityObj = {};
+                const typeObj = {};
+                filteredParks.forEach(park => {
+                    const city = park.addr.slice(park.addr.indexOf(',') + 2, park.addr.lastIndexOf(','));
+                    const type = park.type.slice(6);
+                    if (!cityObj[city]) cityObj[city] = true;
+                    if (!typeObj[type]) typeObj[type] = true;
+                });
+
+                return {
+                    cities: Object.keys(cityObj),
+                    types: Object.keys(typeObj),
+                };
+            };
+
+            const renderFilterBtns = (element, filter) => {
+                const htmlFilterBtns = filterBtnCats()[filter].map(e => {
+                    const html = `
+                        <button class="filter-category-btn common">${e}</button>
+                    `;
+                    return html;
+                });
+                htmlFilterBtns.sort();
+                element.insertAdjacentHTML('afterend', htmlFilterBtns.join(''));
+            };
 
             const { filterDistanceBtnHandler, filterCityBtnHandler, filterTypeBtnHandler } = (() => {
 
-                const filterBtnCats = () => {
-                    const cityObj = {};
-                    const typeObj = {};
-                    filteredParks.forEach(park => {
-                        const city = park.addr.slice(park.addr.indexOf(',') + 2, park.addr.lastIndexOf(','));
-                        const type = park.type.slice(6);
-                        if (!cityObj[city]) cityObj[city] = true;
-                        if (!typeObj[type]) typeObj[type] = true;
-                    });
-
-                    return {
-                        cities: Object.keys(cityObj),
-                        types: Object.keys(typeObj),
-                    };
-                };
-
-                const renderFilterBtns = (element, filter) => {
-                    const htmlFilterBtns = filterBtnCats()[filter].map(e => {
-                        const html = `
-                            <button class="filter-category-btn common">${e}</button>
-                        `;
-                        return html;
-                    });
-                    htmlFilterBtns.sort();
-                    element.insertAdjacentHTML('afterend', htmlFilterBtns.join(''));
-                };
-
-                const filterTypeModal = document.querySelector('.filter-type-modal');
-                const filterCityModal = document.querySelector('.filter-city-modal');
-
-                let filterByCity = {};
-                let filterByType = {};
-                              
                 return {
 
+                    filterDistanceBtnHandler() {},
+                    
                     filterTypeBtnHandler() {
-
+                        
                         renderFilterBtns(document.querySelector('.filter-type-modal .modal-controls'), 'types');
-
+                        
+                        const filterTypeModal = document.querySelector('.filter-type-modal');
                         const filterTypeCancelBtn = document.querySelector('.filter-type-modal .filter-cancel-btn');
                         const filterTypeOkBtn = document.querySelector('.filter-type-modal .filter-ok-btn');
                         const filterByTypeBtns = document.querySelectorAll('.filter-type-modal > button');
@@ -131,30 +131,30 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
                             filterNum.textContent = `${numResults} results`;
                         };
 
-                        const closeModal = () => {
+                        const filterByTypeCloseModal = () => {
                             filterByType = {};
                             for (const btn of filterByTypeBtns) {
                                 btn.remove();
                             }
-                            filterTypeCancelBtn.removeEventListener('click', cancelModal);
-                            filterTypeOkBtn.removeEventListener('click', closeModal);
+                            filterTypeCancelBtn.removeEventListener('click', filterByTypeModalCancelBtnHandler);
+                            filterTypeOkBtn.removeEventListener('click', filterByTypeModalOkBtnHandler);
                             filterTypeModal.close();
                         };
 
-                        const cancelModal = () => {
-                            closeModal();
+                        const filterByTypeModalCancelBtnHandler = () => {
+                            filterByTypeCloseModal();
                         };
 
-                        const okModal = () => {
+                        const filterByTypeModalOkBtnHandler = () => {
                             const types = Object.keys(filterByType);
                             filteredParks = filteredParks.filter(park => {
                                 return types.includes(park.type.slice(6));
                             });
-                            closeModal();
+                            filterByTypeCloseModal();
                         };
 
-                        filterTypeCancelBtn.addEventListener('click', cancelModal);
-                        filterTypeOkBtn.addEventListener('click', okModal);
+                        filterTypeCancelBtn.addEventListener('click', filterByTypeModalCancelBtnHandler);
+                        filterTypeOkBtn.addEventListener('click', filterByTypeModalOkBtnHandler);
                         filterByTypeBtns.forEach(btn => {
                             btn.addEventListener('click', filterByTypeBtnHandler);
                         });
@@ -165,6 +165,7 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
                         
                         renderFilterBtns(document.querySelector('.filter-city-modal .modal-controls'), 'cities');
 
+                        const filterCityModal = document.querySelector('.filter-city-modal');
                         const filterCityCancelBtn = document.querySelector('.filter-city-modal .filter-cancel-btn');
                         const filterCityOkBtn = document.querySelector('.filter-city-modal .filter-ok-btn');
                         const filterByCityBtns = document.querySelectorAll('.filter-city-modal > button');
@@ -191,30 +192,30 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
                             filterNum.textContent = `${numResults} results`;
                         };
 
-                        const closeModal = () => {
+                        const filterByCityCloseModal = () => {
                             filterByCity = {};
                             for (const btn of filterByCityBtns) {
                                 btn.remove();
                             }
-                            filterCityCancelBtn.removeEventListener('click', cancelModal);
-                            filterCityOkBtn.removeEventListener('click', closeModal);
+                            filterCityCancelBtn.removeEventListener('click', filterByCityModalCancelBtnHandler);
+                            filterCityOkBtn.removeEventListener('click', filterByCityModalOkBtnHandler);
                             filterCityModal.close();
                         };
 
-                        const cancelModal = () => {
-                            closeModal();
+                        const filterByCityModalCancelBtnHandler = () => {
+                            filterByCityCloseModal();
                         };
 
-                        const okModal = () => {
+                        const filterByCityModalOkBtnHandler = () => {
                             const cities = Object.keys(filterByCity);
                             filteredParks = filteredParks.filter(park => {
                                 return cities.includes(park.addr.slice(park.addr.indexOf(',') + 2, park.addr.lastIndexOf(',')));
                             });
-                            closeModal();
+                            filterByCityCloseModal();
                         };
 
-                        filterCityCancelBtn.addEventListener('click', cancelModal);
-                        filterCityOkBtn.addEventListener('click', okModal);
+                        filterCityCancelBtn.addEventListener('click', filterByCityModalCancelBtnHandler);
+                        filterCityOkBtn.addEventListener('click', filterByCityModalOkBtnHandler);
                         filterByCityBtns.forEach(btn => {
                             btn.addEventListener('click', cityNameBtnHandler);
                         });
@@ -235,22 +236,22 @@ const { filterBtnHandler, sortBtnHandler, clearBtnHandler } = (oParks => {
             const filterCityBtn = document.querySelector('.filter-city');
             const filterTypeBtn = document.querySelector('.filter-type');
             
-            const closeModal = () => {
-                filterCancelBtn.removeEventListener('click', closeModal);
-                filterOkBtn.removeEventListener('click', okModal);
+            const filterCloseModal = () => {
+                filterCancelBtn.removeEventListener('click', filterCloseModal);
+                filterOkBtn.removeEventListener('click', filterModalOkBtnHandler);
                 filterCityBtn.removeEventListener('click', filterCityBtnHandler);
                 filterTypeBtn.removeEventListener('click', filterTypeBtnHandler);
                 filterModal.close();
             };
             
-            const okModal = () => {
+            const filterModalOkBtnHandler = () => {
                 parks = filteredParks;
                 populateListItems(parks);
-                closeModal();
+                filterCloseModal();
             }
 
-            filterCancelBtn.addEventListener('click', closeModal);
-            filterOkBtn.addEventListener('click', okModal);
+            filterCancelBtn.addEventListener('click', filterCloseModal);
+            filterOkBtn.addEventListener('click', filterModalOkBtnHandler);
             // filterDistanceBtn.addEventListener
             filterCityBtn.addEventListener('click', filterCityBtnHandler);
             filterTypeBtn.addEventListener('click', filterTypeBtnHandler);
