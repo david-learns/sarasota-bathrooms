@@ -6,3 +6,5 @@ node_modules
 package.json
 package-lock.json
 old-app.js
+update-parks-json.js
+old-parks.json
